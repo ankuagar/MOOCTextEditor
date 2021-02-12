@@ -84,7 +84,7 @@ public class BasicDocument extends Document
 		// expression for the syllable counting.  We recommend you implement 
 		// the helper function countSyllables in Document.java using a loop, 
 		// and then call it here on each word.
-		List<String> tokens = getTokens("[aiouyAIOUY]+\\b|[aeiouyAEIOUY]+(?!\\b)|\\b[bcdfghjklmnpqrstvwxzBCDFGHJKLMNPQRSTVWXZ]*e\\b");
+		List<String> tokens = getTokens("[aeiouyAEIOUY]+?[aiouyAIOUY]+\\b|[aiouyAIOUY]+\\b|[aeiouyAEIOUY]+(?!\\b)|\\b[bcdfghjklmnpqrstvwxzBCDFGHJKLMNPQRSTVWXZ]*e\\b");
         return tokens.size();
 	}
 	
