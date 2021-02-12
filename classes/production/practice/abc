@@ -1,0 +1,12 @@
+def print_inverse(n):
+    nstr = str(n)
+    l = [-1]*len(nstr)
+    length = -len(nstr) - 1
+    for i in range(-1,length,-1):
+        val = int(nstr[i])
+        l[-val] = str(-i)
+    return "".join(l)
+    
+print_inverse
+
+
