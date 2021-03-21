@@ -150,5 +150,10 @@ public class Practice {
         System.out.println(a);
         String s = "%one%";
         System.out.println(s.split("[one,two,three]").length);
+        int bb=456;
+        System.out.println(System.identityHashCode(bb));
+        bb += 98;
+        System.out.println(System.identityHashCode(bb));
+        System.out.println(System.nanoTime());
     }
 }
