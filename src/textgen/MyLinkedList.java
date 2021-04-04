@@ -17,6 +17,9 @@ public class MyLinkedList<E> extends AbstractList<E> {
 	/** Create a new empty LinkedList */
 	public MyLinkedList() {
 		// TODO: Implement this method
+		// sentinel nodes are not used
+		head = tail = null;
+		size = 0;
 	}
 
 	/**
@@ -26,7 +29,8 @@ public class MyLinkedList<E> extends AbstractList<E> {
 	public boolean add(E element ) 
 	{
 		// TODO: Implement this method
-		return false;
+		this.add(size, element);
+		return true;
 	}
 
 	/** Get the element at position index 
@@ -34,7 +38,11 @@ public class MyLinkedList<E> extends AbstractList<E> {
 	public E get(int index) 
 	{
 		// TODO: Implement this method.
-		return null;
+		if(index >= size || index < 0) {
+			throw new IndexOutOfBoundsException("List does not contain the given index");
+		}
+
+		return getNodeAtIndex(index).data;
 	}
 
 	/**
@@ -42,9 +50,56 @@ public class MyLinkedList<E> extends AbstractList<E> {
 	 * @param The index where the element should be added
 	 * @param element The element to add
 	 */
-	public void add(int index, E element ) 
-	{
-		// TODO: Implement this method
+	public void add(int index, E element ) {
+		if (index > size || index < 0) {
+			throw new IndexOutOfBoundsException("List does not contain the given index");
+		}
+		if (element == null) {
+			throw new NullPointerException("Tried to insert null element to the list");
+		}
+		LLNode<E> node = new LLNode<E>(element);
+		if (size == 0) {
+			head = tail = new LLNode<E>(element);
+		}
+		else if (index == 0) { //insert at head
+				node.next = head;
+				head.prev = node;
+				head = node;
+		}
+		else if (index == size) { // insert at tail
+				tail.next = node;
+				node.prev = tail;
+				tail = node;
+		}
+		else {
+			LLNode<E> current = getNodeAtIndex(index);
+			node.next = current;
+			node.prev = current.prev;
+			node.prev.next = node;
+			current.prev = node;
+		}
+		size += 1;
+	}
+
+	private LLNode<E> getNodeAtIndex (int index) {
+		// Helper method
+		// For get when size >= 1
+		// For add at index when size > 0 and 0 < index < size
+		// For remove at index when size > 1 and 0 < index < size - 1
+		// For set at index when size > 1 and 0 <= index <= size - 1
+		LLNode<E> current = null;
+		if (index <= size / 2) { // if insertion index is closer to head, iterate forwards starting from head
+			current = head;
+			for (int i = 0; i < index; i++) {
+				current = current.next;
+			}
+		} else { // if insertion index is closer to tail, iterate backwards starting from tail
+			current = tail;
+			for (int i = size - 1; i > index; i--) {
+				current = current.prev;
+			}
+		}
+		return current;
 	}
 
 
@@ -52,7 +107,7 @@ public class MyLinkedList<E> extends AbstractList<E> {
 	public int size() 
 	{
 		// TODO: Implement this method
-		return -1;
+		return size;
 	}
 
 	/** Remove a node at the specified index and return its data element.
@@ -64,7 +119,29 @@ public class MyLinkedList<E> extends AbstractList<E> {
 	public E remove(int index) 
 	{
 		// TODO: Implement this method
-		return null;
+
+		if(index >= size || index < 0) {
+			throw new IndexOutOfBoundsException("List does not contain the given index");
+		}
+		LLNode<E> toBeRemoved = null;
+		if(size == 1) {
+			toBeRemoved = head;
+			head = tail = null;
+		} else if(index == 0) {
+			toBeRemoved = head;
+			head = head.next;
+			head.prev = null;
+		} else if(index == size - 1 ) {
+			toBeRemoved = tail;
+			tail = tail.prev;
+			tail.next = null;
+		} else {
+			toBeRemoved = getNodeAtIndex(index);
+			toBeRemoved.prev.next = toBeRemoved.next;
+			toBeRemoved.next.prev = toBeRemoved.prev;
+		}
+		size -= 1;
+		return toBeRemoved.data;
 	}
 
 	/**
@@ -77,8 +154,27 @@ public class MyLinkedList<E> extends AbstractList<E> {
 	public E set(int index, E element) 
 	{
 		// TODO: Implement this method
-		return null;
-	}   
+		if (index >= size || index < 0) {
+			throw new IndexOutOfBoundsException("List does not contain the given index");
+		}
+		if(element == null) {
+			throw new NullPointerException("Tried to insert null element to the list");
+		}
+		LLNode<E> current = getNodeAtIndex(index);
+		E oldData = current.data;
+		current.data = element;
+		return oldData;
+	}
+
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		LLNode<E> current = head;
+		while(current != null) {
+			sb.append(current.toString() + ", ");
+			current = current.next;
+		}
+		return sb.subSequence(0, sb.length() - 2).toString();
+	}
 }
 
 class LLNode<E> 
@@ -95,6 +191,10 @@ class LLNode<E>
 		this.data = e;
 		this.prev = null;
 		this.next = null;
+	}
+
+	public String toString() {
+		return this.data + "";
 	}
 
 }
