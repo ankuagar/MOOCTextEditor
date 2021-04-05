@@ -32,6 +32,7 @@ public class TrieGrader {
             g.testWordsInOut(ac);
 
             g.testPredictions(ac);
+            ac.printTree();
 
         } catch (Exception e) {
             out.println(g.getFeedback() + "Error during runtime: " + e);
@@ -43,6 +44,7 @@ public class TrieGrader {
 
 
         out.println(feedback.toString());
+
         out.close();
     }
 
@@ -154,8 +156,11 @@ public class TrieGrader {
         auto = ac.predictCompletions("test", 7);
 
         appendTestString(17, "7 completions requested (test for size)...");
-        feedback.append("predictCompletions returned " + auto.size() + " elements.");
-
+        feedback.append("predictCompletions returned " + auto.size() + " elements.\n");
+        feedback.append("Words returned by predictCompletions: ");
+        for (String s : auto) {
+            feedback.append(s + ", ");
+        }
         appendTestString(18, "Testing if list is sorted from shortest to longest...");
         feedback.append("Check above output.");
 

@@ -1,10 +1,6 @@
 package spelling;
 
-import java.util.List;
-import java.util.Set;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.*;
 
 /** 
  * An trie data structure that implements the Dictionary and the AutoComplete ADT
@@ -40,7 +36,16 @@ public class AutoCompleteDictionaryTrie implements  Dictionary, AutoComplete {
 	public boolean addWord(String word)
 	{
 	    //TODO: Implement this method.
-	    return false;
+		word = word.toLowerCase(Locale.ROOT);
+		if(isWord(word)) return false;
+		TrieNode current = root;
+		for(Character c: word.toCharArray()){
+			current.insert(c);
+			current = current.getChild(c);
+		}
+		size += 1;
+		current.setEndsWord(true);
+	    return true;
 	}
 	
 	/** 
@@ -50,7 +55,7 @@ public class AutoCompleteDictionaryTrie implements  Dictionary, AutoComplete {
 	public int size()
 	{
 	    //TODO: Implement this method
-	    return 0;
+	    return size;
 	}
 	
 	
@@ -60,7 +65,18 @@ public class AutoCompleteDictionaryTrie implements  Dictionary, AutoComplete {
 	public boolean isWord(String s) 
 	{
 	    // TODO: Implement this method
-		return false;
+		if(s.length() == 0) return false; //empty string should not be in the dictionary
+		String word = s.toLowerCase(Locale.ROOT);
+		TrieNode current = root;
+		for(Character c: word.toCharArray()) {
+			if(current.getChild(c) == null) {
+				return false;
+			} else {
+				current = current.getChild(c);
+			}
+		}
+		return current.endsWord();
+
 	}
 
 	/** 
@@ -100,8 +116,30 @@ public class AutoCompleteDictionaryTrie implements  Dictionary, AutoComplete {
     	 //       If it is a word, add it to the completions list
     	 //       Add all of its child nodes to the back of the queue
     	 // Return the list of completions
-    	 
-         return null;
+
+		 List<String> completions = new ArrayList<String>();
+		 if(prefix.length() == 0 || numCompletions == 0) return completions;
+		 prefix = prefix.toLowerCase(Locale.ROOT);
+		 TrieNode current = root;
+		 for(Character c: prefix.toCharArray()) {
+			 if(current.getChild(c) == null) {
+				 return completions;
+			 } else {
+				 current = current.getChild(c);
+			 }
+		 }
+		 //Start BFS to find correct completions for the prefix
+		 Queue<TrieNode> queue = new LinkedList<TrieNode>();
+		 queue.add(current);
+		 while(queue.size() > 0 && completions.size() < numCompletions) {
+		 	TrieNode node = queue.remove();
+		 	if(node.endsWord()) completions.add(node.getText());
+		 	for(Character c: node.getValidNextCharacters()) {
+		 		queue.add(node.getChild(c));
+			}
+		 }
+		 Collections.sort(completions);
+		 return completions;
      }
 
  	// For debugging
