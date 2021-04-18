@@ -4,6 +4,7 @@
 package spelling;
 
 //import java.util.ArrayList;
+import java.util.Set;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -42,7 +43,28 @@ public class WPTree implements WordPath {
 	public List<String> findPath(String word1, String word2) 
 	{
 	    // TODO: Implement this method.
-	    return new LinkedList<String>();
+        Set<String> visited = new HashSet<String>();
+        root = new WPTreeNode(word1, null);
+        visited.add(word1);
+        List<WPTreeNode> queue = new LinkedList<WPTreeNode>();
+        List<String> suggestions = new LinkedList<String>();
+        WPTreeNode parent, child = null;
+        queue.add(root);
+        while(queue.size() > 0) {
+            parent = queue.remove(0);
+            suggestions = nw.distanceOne(parent.getWord(), true);
+            for(String suggestion : suggestions) {
+                if(!visited.contains(suggestion)) {
+                    child = parent.addChild(suggestion);
+                    queue.add(child);
+                    visited.add(suggestion);
+                    if(suggestion.equals(word2)) {
+                        return child.buildPathToRoot();
+                    }
+                }
+            }
+        }
+        return new LinkedList<String>();
 	}
 	
 	// Method to print a list of WPTreeNodes (useful for debugging)
